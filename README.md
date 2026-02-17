@@ -1,19 +1,19 @@
-# ⚖️ Agentic Compliance Auditor
+#  Agentic Compliance Auditor
 
 An advanced regulatory compliance auditing system that helps organizations automatically analyze documents for compliance requirements using autonomous agents, enhanced memory systems, and intelligent document retrieval.
 
-## 🎯 Overview
+##  Overview
 
 This system combines **Agentic RAG** (Retrieval Augmented Generation) with **multi-tier memory systems** to provide accurate, cited, and contextually-aware compliance analysis. The platform functions as an intelligent compliance officer that can reason through complex regulatory requirements.
 
 ### Key Features
 
-- **🤖 Agentic RAG**: Autonomous agents using LangGraph that can plan, reason, use tools, and self-reflect
-- **📚 Hybrid Retrieval**: Semantic search + keyword matching + metadata filtering for precision
-- **🧠 Multi-Tier Memory**: Redis for session management, Neo4j for knowledge graphs
-- **🔍 Citation Tracking**: Every answer includes source citations with article/section references
-- **📊 Evaluation Framework**: RAGAS-based evaluation for quality assurance
-- **🚀 Production-Ready**: FastAPI server + Streamlit UI + comprehensive logging
+- ** Agentic RAG**: Autonomous agents using LangGraph that can plan, reason, use tools, and self-reflect
+- ** Hybrid Retrieval**: Semantic search + keyword matching + metadata filtering for precision
+- ** Multi-Tier Memory**: Redis for session management, Neo4j for knowledge graphs
+- ** Citation Tracking**: Every answer includes source citations with article/section references
+- ** Evaluation Framework**: RAGAS-based evaluation for quality assurance
+- ** Production-Ready**: FastAPI server + Streamlit UI + comprehensive logging
 
 ### Supported Regulations
 
@@ -22,7 +22,7 @@ This system combines **Agentic RAG** (Retrieval Augmented Generation) with **mul
 - **SOC2** (Service Organization Control 2)
 - Extensible to any regulatory framework
 
-## 🏗️ Architecture
+##  Architecture
 
 ```
 ┌─────────────────────────────────────┐
@@ -39,7 +39,7 @@ This system combines **Agentic RAG** (Retrieval Augmented Generation) with **mul
 └─────────────────────────────────────┘
 ```
 
-## 📋 Prerequisites
+##  Prerequisites
 
 ### Required Software
 
@@ -60,7 +60,7 @@ This system combines **Agentic RAG** (Retrieval Augmented Generation) with **mul
 
 > **Note**: The system will work without Redis and Neo4j using fallback in-memory storage, but with reduced capabilities.
 
-## 🚀 Quick Start
+##  Quick Start
 
 ### 1. Clone and Setup Environment
 
@@ -129,7 +129,7 @@ streamlit run streamlit_app.py
 # UI will open at http://localhost:8501
 ```
 
-## 💻 Usage
+##  Usage
 
 ### Using the Streamlit UI
 
@@ -181,7 +181,7 @@ result = agent.run("What is GDPR Article 17 about?")
 print(result['answer'])
 ```
 
-## 📁 Project Structure
+##  Project Structure
 
 ```
 AI_Compliance_Auditor/
@@ -219,7 +219,7 @@ AI_Compliance_Auditor/
 └── README.md
 ```
 
-## 🔧 Configuration
+##  Configuration
 
 Key settings in `.env` or `config/config.py`:
 
@@ -242,7 +242,7 @@ MAX_ITERATIONS=10
 ENABLE_SELF_REFLECTION=true
 ```
 
-## 📊 Evaluation
+##  Evaluation
 
 Run the evaluation framework to assess system performance:
 
@@ -257,7 +257,7 @@ This will:
 - Assess answer accuracy and citations
 - Generate a detailed report
 
-## 🎓 How It Works
+##  How It Works
 
 ### 1. Document Ingestion
 
@@ -298,20 +298,20 @@ python src/retrieval/vector_store.py
 python src/agents/compliance_agent.py
 ```
 
-## 📈 Performance Tips
+##  Performance Tips
 
 1. **Use GPU acceleration**: If available, Ollama will use GPU automatically
 2. **Adjust chunk size**: Smaller chunks (256) for precise answers, larger (1024) for context
 3. **Enable reranking**: Set `RERANK_ENABLED=true` for better precision (requires Cohere API)
 4. **Simple agent mode**: Use for faster responses when full reasoning isn't needed
 
-## 🔒 Security Notes
+##  Security Notes
 
 - All processing is local by default (using Ollama)
 - No data sent to external APIs unless you configure external LLM providers
 - Redis and Neo4j should be secured in production environments
 
-## 🐛 Troubleshooting
+##  Troubleshooting
 
 ### Ollama Connection Error
 ```
@@ -337,14 +337,14 @@ Warning: Could not connect to Redis. Using fallback.
 Solution: Start Redis server or continue with in-memory fallback
 ```
 
-## 📚 Additional Resources
+##  Additional Resources
 
 - [LangGraph Documentation](https://langchain-ai.github.io/langgraph/)
 - [ChromaDB Guide](https://docs.trychroma.com/)
 - [Ollama Models](https://ollama.ai/library)
 - [RAGAS Evaluation](https://docs.ragas.io/)
 
-## 🤝 Contributing
+##  Contributing
 
 To extend this system:
 
@@ -353,11 +353,11 @@ To extend this system:
 3. **Modify agent behavior**: Edit `src/agents/compliance_agent.py`
 4. **Add evaluation metrics**: Extend `src/evaluation/ragas_eval.py`
 
-## 📝 License
+##  License
 
 This project is for educational and demonstration purposes.
 
-## 🙏 Acknowledgments
+##  Acknowledgments
 
 Built with:
 - **LangChain** & **LangGraph** - Agent framework
