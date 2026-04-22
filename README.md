@@ -26,7 +26,7 @@ You ask a compliance question. The system:
 3. Self-critiques the response — if citations are missing or the answer is vague, it tries again
 4. Returns the final answer with specific article/section references
 
-Everything runs locally by default. No data leaves your machine.
+Everything except the LLM call runs locally. Documents, embeddings, and session state stay on your machine — only the composed prompt is sent to OpenAI for generation.
 
 ---
 
@@ -255,7 +255,7 @@ tools = create_langchain_tools(retriever)
 agent = ComplianceAgent(
     retriever=retriever,
     tools=tools,
-    model_name="llama3.2"
+    model_name="gpt-4o-mini"
 )
 
 result = agent.run("What is GDPR Article 17 about?")
