@@ -48,10 +48,13 @@ class VectorStore:
         logger.info(f"Loading embedding model: {embedding_model}")
         self.embedding_model = SentenceTransformer(embedding_model)
 
-        # Get or create collection
+        # Get or create collection (cosine similarity for more intuitive relevance scores)
         self.collection = self.client.get_or_create_collection(
             name=collection_name,
-            metadata={"description": "Compliance and regulatory documents"}
+            metadata={
+                "description": "Compliance and regulatory documents",
+                "hnsw:space": "cosine",
+            },
         )
 
         logger.info(f"Vector store initialized with collection: {collection_name}")
@@ -156,12 +159,14 @@ class VectorStore:
         # Format results
         formatted_results = []
         for i in range(len(results['ids'][0])):
+            distance = results['distances'][0][i]
+            raw_similarity = max(0.0, 1 - distance)
             result = {
                 'id': results['ids'][0][i],
                 'content': results['documents'][0][i],
                 'metadata': self._restore_metadata(results['metadatas'][0][i]),
-                'distance': results['distances'][0][i],
-                'similarity_score': 1 - results['distances'][0][i]  # Convert distance to similarity
+                'distance': distance,
+                'similarity_score': raw_similarity,
             }
             formatted_results.append(result)
 
@@ -228,9 +233,9 @@ class VectorStore:
                     1 for kw in keywords if kw.lower() in content_lower
                 )
 
-                # Boost score based on keyword matches
-                boost = 1.0 + (keyword_matches * 0.1)
-                result['similarity_score'] *= boost
+                # Light keyword boost that won't overwhelm semantic ranking
+                boost = 1.0 + (keyword_matches * 0.03)
+                result['similarity_score'] = min(1.0, result['similarity_score'] * boost)
                 result['keyword_matches'] = keyword_matches
 
                 keyword_boosted.append(result)
@@ -267,7 +272,10 @@ class VectorStore:
 
         self.collection = self.client.create_collection(
             name=self.collection_name,
-            metadata={"description": "Compliance and regulatory documents"}
+            metadata={
+                "description": "Compliance and regulatory documents",
+                "hnsw:space": "cosine",
+            },
         )
 
 

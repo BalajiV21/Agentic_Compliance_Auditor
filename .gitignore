@@ -83,3 +83,17 @@ read_doc.py
 # Excluded project files
 run_all.bat
 quickstart.md
+
+# Generated PDFs (guides, project details)
+*.pdf
+
+# AWS credentials and SSH keys — NEVER commit
+AWS_setup/
+*.pem
+*_credentials.csv
+
+# Local Claude Code cache
+.claude/
+
+# Personal / unrelated files
+interview_prep.html

@@ -10,10 +10,15 @@ from loguru import logger
 import uuid
 from datetime import datetime
 
-# Import project components
+# Import project components#
+#import sys#
+#from pathlib import Path#
+#sys.path.append(str(Path(__file__).parent.parent))#
+
 import sys
 from pathlib import Path
-sys.path.append(str(Path(__file__).parent.parent))
+sys.path.insert(0, str(Path(__file__).parent.parent))
+sys.path.insert(0, str(Path(__file__).parent.parent.parent))
 
 from config import settings
 from retrieval import VectorStore, CitationRetriever
@@ -99,7 +104,7 @@ async def startup_event():
     agent = ComplianceAgent(
         retriever=retriever,
         tools=tools,
-        model_name=settings.OLLAMA_MODEL,
+        model_name=settings.OPENAI_MODEL,
         max_iterations=settings.MAX_ITERATIONS,
         enable_reflection=settings.ENABLE_SELF_REFLECTION
     )
@@ -183,7 +188,7 @@ async def query_compliance(request: QueryRequest):
         if request.use_simple_agent:
             simple_agent = SimpleComplianceAgent(
                 retriever=retriever,
-                model_name=settings.OLLAMA_MODEL
+                model_name=settings.OPENAI_MODEL
             )
             answer = simple_agent.answer(request.query)
 

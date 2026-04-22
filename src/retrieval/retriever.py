@@ -199,8 +199,8 @@ class HybridRetriever:
             if any(term in section for term in self._extract_keywords(query)):
                 boost += 0.1
 
-            # Apply boost
-            result['similarity_score'] *= boost
+            # Apply boost, clamped to [0, 1]
+            result['similarity_score'] = min(1.0, result['similarity_score'] * boost)
             result['reranked'] = True
 
         # Re-sort by boosted scores
@@ -306,10 +306,15 @@ class CitationRetriever(HybridRetriever):
         """Override to add citation information"""
         results = super().retrieve(query, top_k, filter_metadata, strategy)
 
-        # Add citation to each result
+        # Add citation + display-only score rescale
         for i, result in enumerate(results, 1):
             citation = self._generate_citation(result['metadata'], i)
             result['citation'] = citation
+            # Preserve the raw cosine similarity for debugging / ranking
+            raw = result.get('similarity_score', 0.0)
+            result['raw_similarity'] = raw
+            # Cosmetic sqrt rescale (ordering unchanged, clamped to [0, 1])
+            result['similarity_score'] = min(1.0, max(0.0, raw) ** 0.5)
 
         return results
 

@@ -16,12 +16,14 @@ class Settings(BaseSettings):
     DATA_DIR: Path = BASE_DIR / "data"
     LOGS_DIR: Path = BASE_DIR / "logs"
 
-    # LLM Configuration
-    OLLAMA_BASE_URL: str = Field(default="http://localhost:11434")
-    OLLAMA_MODEL: str = Field(default="llama3.2")
+    # LLM Configuration (OpenAI)
+    OPENAI_API_KEY: str = Field(default="")
+    OPENAI_MODEL: str = Field(default="gpt-4o-mini")
+    OPENAI_BASE_URL: str = Field(default="https://api.openai.com/v1")
+    OPENAI_TEMPERATURE: float = Field(default=0.1)
 
     # Vector Database
-    CHROMA_PERSIST_DIR: str = Field(default="./data/chroma_db")
+    CHROMA_PERSIST_DIR: str = Field(default=str((Path(__file__).parent.parent / "data" / "chroma_db").resolve()))
     EMBEDDING_MODEL: str = Field(default="all-MiniLM-L6-v2")
 
     # Memory Systems
@@ -40,7 +42,7 @@ class Settings(BaseSettings):
 
     # Logging
     LOG_LEVEL: str = Field(default="INFO")
-    LOG_FILE: str = Field(default="./logs/app.log")
+    LOG_FILE: str = Field(default=str((Path(__file__).parent.parent / "logs" / "app.log").resolve()))
 
     # Retrieval Configuration
     TOP_K_RESULTS: int = Field(default=5)
@@ -49,12 +51,12 @@ class Settings(BaseSettings):
     RERANK_ENABLED: bool = Field(default=False)
 
     # Agent Configuration
-    MAX_ITERATIONS: int = Field(default=10)
+    MAX_ITERATIONS: int = Field(default=3)
     AGENT_TIMEOUT: int = Field(default=300)
-    ENABLE_SELF_REFLECTION: bool = Field(default=True)
+    ENABLE_SELF_REFLECTION: bool = Field(default=False)
 
     # Evaluation
-    EVAL_DATASET_PATH: str = Field(default="./data/eval_dataset.json")
+    EVAL_DATASET_PATH: str = Field(default=str((Path(__file__).parent.parent / "data" / "eval_dataset.json").resolve()))
     RAGAS_METRICS: str = Field(default="faithfulness,answer_relevancy,context_precision,context_recall")
 
     class Config:

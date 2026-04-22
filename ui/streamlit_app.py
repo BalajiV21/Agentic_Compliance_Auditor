@@ -9,14 +9,16 @@ from pathlib import Path
 import json
 
 # Add src to path
-sys.path.append(str(Path(__file__).parent.parent / "src"))
+#sys.path.append(str(Path(__file__).parent.parent / "src"))
+
+sys.path.insert(0, str(Path(__file__).parent.parent / "src"))
+sys.path.insert(0, str(Path(__file__).parent.parent))
 
 from config import settings
 
 # Page configuration
 st.set_page_config(
     page_title="Agentic Compliance Auditor",
-    page_icon="⚖️",
     layout="wide",
     initial_sidebar_state="expanded"
 )
@@ -68,7 +70,7 @@ def main():
     # Check API health
     if not check_api_health():
         st.error("""
-        🚨 **API Server Not Running**
+         **API Server Not Running**
 
         Please start the API server first:
         ```bash
@@ -78,11 +80,11 @@ def main():
         """)
         return
 
-    st.success("✅ Connected to API")
+    st.success(" Connected to API")
 
     # Sidebar
     with st.sidebar:
-        st.header("⚙️ Settings")
+        st.header(" Settings")
 
         # Session management
         if 'session_id' not in st.session_state:
@@ -103,7 +105,7 @@ def main():
         )
 
         # Clear conversation
-        if st.button("🗑️ Clear Conversation"):
+        if st.button(" Clear Conversation"):
             try:
                 requests.delete(f"{API_URL}/conversation/{session_id}")
                 st.success("Conversation cleared!")
@@ -114,7 +116,7 @@ def main():
         st.divider()
 
         # System stats
-        st.subheader("📊 System Stats")
+        st.subheader(" System Stats")
         try:
             stats_response = requests.get(f"{API_URL}/stats")
             if stats_response.status_code == 200:
@@ -127,12 +129,12 @@ def main():
         st.divider()
 
         # About
-        st.subheader("ℹ️ About")
+        st.subheader(" About")
         st.markdown("""
         This system uses:
         - **LangGraph** for agentic workflows
         - **ChromaDB** for vector storage
-        - **Ollama** for local LLM inference
+        - **OpenAI gpt-4o-mini** for LLM inference
         - **FastAPI** for backend API
         """)
 
@@ -140,10 +142,10 @@ def main():
     col1, col2 = st.columns([2, 1])
 
     with col1:
-        st.header("💬 Ask a Compliance Question")
+        st.header(" Ask a Compliance Question")
 
         # Sample questions
-        with st.expander("📝 Sample Questions"):
+        with st.expander(" Sample Questions"):
             st.markdown("""
             - What are the requirements for data retention under GDPR Article 17?
             - How does HIPAA define Protected Health Information?
@@ -160,11 +162,11 @@ def main():
         )
 
         # Submit button
-        if st.button("🚀 Submit Query", type="primary"):
+        if st.button(" Submit Query", type="primary"):
             if not query:
                 st.warning("Please enter a question")
             else:
-                with st.spinner("🤔 Thinking..."):
+                with st.spinner(" Thinking..."):
                     result = query_api(query, session_id, use_simple)
 
                     if result:
@@ -215,7 +217,7 @@ def main():
     st.divider()
     st.markdown("""
     <div style='text-align: center'>
-        <p>Built with ❤️ using LangGraph, ChromaDB, and Ollama</p>
+        <p>Using LangGraph, ChromaDB, and OpenAI gpt-4o-mini</p>
     </div>
     """, unsafe_allow_html=True)
 

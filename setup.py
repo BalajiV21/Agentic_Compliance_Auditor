@@ -141,7 +141,7 @@ def main():
     print("=" * 60)
     print(f"  Total chunks stored: {count}")
     print("\nNext steps:")
-    print("  1. Start Ollama:  ollama serve")
+    print("  1. Set OPENAI_API_KEY in .env (get key at https://platform.openai.com/api-keys)")
     print("  2. Start API:     cd src/api && python main.py")
     print("  3. Start UI:      cd ui && streamlit run streamlit_app.py")
     return True

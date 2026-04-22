@@ -5,10 +5,17 @@ Implements multi-step reasoning with self-reflection
 from typing import TypedDict, List, Annotated
 from langgraph.graph import StateGraph, END
 from langgraph.prebuilt import ToolNode
-from langchain_ollama import ChatOllama
+from langchain_openai import ChatOpenAI
 from langchain_core.messages import HumanMessage, AIMessage, SystemMessage, ToolMessage
 from loguru import logger
 import operator
+import os
+
+# Load settings so we can default to configured OpenAI model/key
+try:
+    from config import settings as _settings
+except Exception:
+    _settings = None
 
 
 class ComplianceState(TypedDict):
@@ -32,9 +39,12 @@ class ComplianceAgent:
         self,
         retriever,
         tools,
-        model_name: str = "llama3.2",
+        model_name: str = "gpt-4o-mini",
         max_iterations: int = 5,
-        enable_reflection: bool = True
+        enable_reflection: bool = True,
+        api_key: str = None,
+        base_url: str = None,
+        temperature: float = 0.1,
     ):
         """
         Initialize compliance agent
@@ -42,20 +52,36 @@ class ComplianceAgent:
         Args:
             retriever: Document retriever
             tools: List of LangChain tools
-            model_name: Ollama model name
+            model_name: OpenAI model name (e.g. gpt-4o-mini)
             max_iterations: Maximum reasoning iterations
             enable_reflection: Enable self-reflection
+            api_key: OpenAI API key (falls back to settings / OPENAI_API_KEY env var)
+            base_url: OpenAI-compatible base URL (optional)
+            temperature: Sampling temperature
         """
         self.retriever = retriever
         self.tools = tools
         self.max_iterations = max_iterations
         self.enable_reflection = enable_reflection
 
+        # Resolve API key / base URL from args -> settings -> env
+        api_key = api_key or (getattr(_settings, "OPENAI_API_KEY", None) if _settings else None) \
+                  or os.getenv("OPENAI_API_KEY")
+        base_url = base_url or (getattr(_settings, "OPENAI_BASE_URL", None) if _settings else None) \
+                   or os.getenv("OPENAI_BASE_URL")
+
+        if not api_key:
+            raise ValueError(
+                "OpenAI API key not set. Put OPENAI_API_KEY in .env or pass api_key=..."
+            )
+
         # Initialize LLM
-        logger.info(f"Initializing LLM: {model_name}")
-        self.llm = ChatOllama(
+        logger.info(f"Initializing OpenAI LLM: {model_name}")
+        self.llm = ChatOpenAI(
             model=model_name,
-            temperature=0.1,  # Low temperature for factual responses
+            temperature=temperature,
+            api_key=api_key,
+            base_url=base_url,
         )
 
         # Bind tools to LLM
@@ -329,9 +355,21 @@ class SimpleComplianceAgent:
     Good for basic queries
     """
 
-    def __init__(self, retriever, model_name: str = "llama3.2"):
+    def __init__(self, retriever, model_name: str = "gpt-4o-mini",
+                 api_key: str = None, base_url: str = None, temperature: float = 0.1):
         self.retriever = retriever
-        self.llm = ChatOllama(model=model_name, temperature=0.1)
+        api_key = api_key or (getattr(_settings, "OPENAI_API_KEY", None) if _settings else None) \
+                  or os.getenv("OPENAI_API_KEY")
+        base_url = base_url or (getattr(_settings, "OPENAI_BASE_URL", None) if _settings else None) \
+                   or os.getenv("OPENAI_BASE_URL")
+        if not api_key:
+            raise ValueError(
+                "OpenAI API key not set. Put OPENAI_API_KEY in .env or pass api_key=..."
+            )
+        self.llm = ChatOpenAI(
+            model=model_name, temperature=temperature,
+            api_key=api_key, base_url=base_url,
+        )
 
     def answer(self, query: str) -> str:
         """
@@ -392,7 +430,7 @@ if __name__ == "__main__":
     agent = ComplianceAgent(
         retriever=retriever,
         tools=tools,
-        model_name="llama3.2",
+        model_name="gpt-4o-mini",
         max_iterations=3
     )
 
